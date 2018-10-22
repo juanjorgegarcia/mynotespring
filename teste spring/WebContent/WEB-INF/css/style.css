@@ -1,0 +1,82 @@
+#logoName{
+    padding-left: 2%;
+}
+
+#mainIcon{
+    size: 500rem;
+}
+
+#accountIcon{
+    size: 50px;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+#accountIcon:hover{
+    size: 50px;
+    padding-right: 20px;
+    padding-left: 20px;
+    background-color:#1d87da!important;
+    cursor:pointer;
+}
+
+#searchBar{
+    padding-top: 30px;
+}
+.note{
+	display:flex;
+	flex-wrap:wrap;
+	margin:0% !important;
+}
+.notinha{
+		margin:0% !important;
+	
+}
+ #nav{
+	display:flex;
+	justify-content:space-between;
+} 
+
+.navcontainer {
+  display: flex;
+}
+#addNoteButton:hover{
+	background-color:#bbbbbb!important;
+}
+#addNoteButton{
+	background-color:#dedcdc!important;
+}
+
+#deleteButton:hover{
+	background-color:#dedcdc;
+	box-shadow: 0.05em 0.05em #bbbbbb;
+	
+}
+.tag{
+	background-color: #aba8a8;
+	
+	border-radius: 0.8em;
+
+	padding:3px;
+	margin:3px;
+	width: fit-content;
+    max-width: 100%;
+}
+#noteTag{
+	max-width:50%;
+	width: fit-content;
+	padding: 5%;
+	margin: 5%;
+	
+	
+}
+
+.noteText{
+	padding:10px;
+	margin:10px;
+}
+.noteHeader{
+	    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
