@@ -14,6 +14,9 @@ import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,7 +39,7 @@ public class UserController {
 		return "signUp";
 	}
 
-	@RequestMapping(value = "/user", method = RequestMethod.POST)
+	@PostMapping(value = "/user")
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.OK)
 	public String addUser(@RequestBody String rawJson, HttpSession session) {
@@ -58,7 +61,7 @@ public class UserController {
 
 
 	}
-	@RequestMapping(value = "/user", method = RequestMethod.PUT)
+	@PutMapping(value = "/user")
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.OK)
 	public void changePass(@RequestBody String rawJson, HttpSession session) {
@@ -160,7 +163,7 @@ public class UserController {
 		return site;
 	}
 
-	@RequestMapping(value = "/user", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/user")
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.OK)
 	public void removeUser(HttpServletRequest request, HttpServletResponse response)

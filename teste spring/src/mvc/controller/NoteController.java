@@ -17,6 +17,10 @@ import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +36,7 @@ import mvc.model.*;
 @Controller
 public class NoteController {
 
-	@RequestMapping(value = "/note", method = RequestMethod.POST, produces = "application/json")
+	@PostMapping(value = "/note", produces = "application/json")
 	@ResponseBody
 	public String addNote(@RequestBody String rawJson, HttpSession session) {
 
@@ -65,11 +69,10 @@ public class NoteController {
 	}
 
 	
-	@RequestMapping(value = "/note", method = RequestMethod.PUT, produces = "application/json")
+	@PutMapping(value = "/note", produces = "application/json")
 	@ResponseBody
 	public String editNote(@RequestBody String rawJson, HttpSession session)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 
 //		Gson gson = new Gson();
 		Integer idUser = (Integer) session.getAttribute("idUser");
@@ -110,7 +113,7 @@ public class NoteController {
 
 
 
-	@RequestMapping(value = "/note", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/note")
 	@ResponseStatus(value = HttpStatus.OK)
 	public void removeNote(@RequestBody String rawJson, HttpSession session)
 			throws ServletException, IOException {
@@ -133,7 +136,7 @@ public class NoteController {
 
 	}
 	
-	@RequestMapping(value = "/note/q", method = RequestMethod.GET)
+	@GetMapping(value = "/note/q")
 	@ResponseBody
 	public String searchNote(@RequestParam(value="text", required=false) String text, HttpSession session)
 			throws ServletException, IOException {

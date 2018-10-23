@@ -24,7 +24,7 @@ public class DAO {
 		}
 		try {
 			connection = DriverManager.getConnection(
-					"jdbc:mysql://localhost/mynote?useSSL=false&useTimezone=true&serverTimezone=UTC", "root", "");
+					"jdbc:mysql://localhost/projeto2?useSSL=false&useTimezone=true&serverTimezone=UTC", "root", "");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

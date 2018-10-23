@@ -11,41 +11,33 @@
 <head>
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
 <!-- <link rel="stylesheet" type="text/css" href="./css/style.css" />
 <script src="./js/index.js"></script> -->
 <script>
 //Client ID and API key from the Developer Console
 var CLIENT_ID = '707975249507-jaoe25kaupse1c9lba97og4hll37hk18.apps.googleusercontent.com';
 var API_KEY = 'AIzaSyC5VMPR01zRwEvVFlE1L3ToyBwgXRiFcuc';
-
-//Array of API discovery doc URLs for APIs used by the quickstart
+ //Array of API discovery doc URLs for APIs used by the quickstart
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
-
-//Authorization scopes required by the API; multiple scopes can be
+ //Authorization scopes required by the API; multiple scopes can be
 //included, separated by spaces.
 var SCOPES =
   "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.events";
-
-
-
-/**
+ /**
 *  On load, called to load the auth2 library and API client library.
 */
 function handleClientLoad() {
   gapi.load('client:auth2', initClient);
 }
-
-
-/**
+ /**
 *  Initializes the API client library and sets up sign-in state
 *  listeners.
 */
 function initClient() {
-
-  gapi.client.init({
+   gapi.client.init({
       apiKey: API_KEY,
       clientId: CLIENT_ID,
       discoveryDocs: DISCOVERY_DOCS,
@@ -55,15 +47,13 @@ function initClient() {
 	  var signoutButton = document.getElementById("signout_button");
       // Listen for sign-in state changes.
       gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-
-      // Handle the initial sign-in state.
+       // Handle the initial sign-in state.
       updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
       authorizeButton.onclick = handleAuthClick;
       signoutButton.onclick = handleSignoutClick;
   });
 }
-
-/**
+ /**
 *  Called when the signed in status changes, to update the UI
 *  appropriately. After a sign-in, the API is called.
 */
@@ -75,8 +65,7 @@ function updateSigninStatus(isSignedIn) {
       signoutButton.style.display = 'block';
 //       listUpcomingEvents();
       console.log(gapi.client)
-
-/*         var request = gapi.client.calendar.events.insert({
+ /*         var request = gapi.client.calendar.events.insert({
           'calendarId': 'primary',
           'resource': event
       });
@@ -86,28 +75,24 @@ function updateSigninStatus(isSignedIn) {
       }); */
       console.log('rerer')
       // sendAuthorizedApiRequest(request)
-
-  } else {
+   } else {
       authorizeButton.style.display = 'block';
       signoutButton.style.display = 'none';
   }
 }
-
-/**
+ /**
 *  Sign in the user upon button click.
 */
 function handleAuthClick(event) {
   gapi.auth2.getAuthInstance().signIn();
 }
-
-/**
+ /**
 *  Sign out the user upon button click.
 */
 function handleSignoutClick(event) {
   gapi.auth2.getAuthInstance().signOut();
 }
-
-/**
+ /**
 * Append a pre element to the body containing the given message
 * as its text node. Used to display the results of the API call.
 *
@@ -118,14 +103,12 @@ function appendPre(message,idNote) {
   var textContent = document.createTextNode(message + '\n');
   pre.appendChild(textContent);
 }
-
-/**
+ /**
 * Print the summary and start datetime/date of the next ten events in
 * the authorized user's calendar. If no events are found an
 * appropriate message is printed.
 */
-
-function listUpcomingEvents() {
+ function listUpcomingEvents() {
   gapi.client.calendar.events.list({
       'calendarId': 'primary',
       'timeMin': (new Date()).toISOString(),
@@ -136,8 +119,7 @@ function listUpcomingEvents() {
   }).then(function (response) {
       var events = response.result.items;
       appendPre('Upcoming events:');
-
-      if (events.length > 0) {
+       if (events.length > 0) {
           for (i = 0; i < events.length; i++) {
               var event = events[i];
               var when = event.start.dateTime;
@@ -187,8 +169,7 @@ function addEvent(idNote){
 		hours = parseInt(timepicker.substring(0,2))+1
 		minutes = "00"
 			console.log(hours)
-
-		if (hours>=24){
+ 		if (hours>=24){
 			var days = parseInt(datepicker.substring(8,10))+1
 			hours = "00"
 			console.log(hours)
@@ -197,8 +178,7 @@ function addEvent(idNote){
 		
 	}
 	console.log(hours)
-
-	const datetime= datepicker+"T"+timepicker+":00"
+ 	const datetime= datepicker+"T"+timepicker+":00"
 	console.log(minutes)
 	console.log(datepicker+"T"+hours+":"+minutes+":00")
 	var event = {
@@ -228,10 +208,10 @@ function addEvent(idNote){
      request.execute(function (event) {
          appendPre('Event created: ' + event.htmlLink,idNote);
      });
-
-}
+ }
 </script>
 <script>
+console.log("importou o js")
 
 function getNoteInfo(idNote){
     const note = document.getElementById("note"+idNote)
@@ -397,8 +377,8 @@ function onTagChange(idNote) {
 		console.log('atualizando o bd')
 		
 		const url = "note"
-		let tag = nots.children[3].children[0].innerText
 
+		let tag = nots.children[3].children[0].innerText
 		const params = getNoteInfo(idNote)
 
 		console.log(idNote)
@@ -582,6 +562,10 @@ function createNote(note) {
 										id="colorPicker\${note.idNote}" name="color"
 										value="\${note.color}" onclick="onColorPicker(\${note.idNote})">
 								</div></li>
+							<li><div onClick='translateText(\${note.idNote})'
+									style="display: flex; justify-content: flex-start; align-items: center;">
+									<i class="material-icons">language</i>Translate
+								</div></li>
 							<li><div onClick="removeNote(\${note.idNote})"
 									style="display: flex; justify-content: flex-start; align-items: center;">
 									<i class="material-icons">delete</i>Delete
@@ -609,9 +593,7 @@ function createNote(note) {
 								onClick="addEvent(\${note.idNote})"
 								style="color: black; background-color: transparent; display: flex; justify-content: center; margin: 2px;">Create Event</a>
 						</div>
-
-
-					</div>
+ 					</div>
 						<div id="noteFooter">
 							<div id="noteTag">
 								<div contenteditable="true" class="tag" id="tag\${note.idNote}"
@@ -638,6 +620,7 @@ function showDropdown(){
 	},350)
 	
 }
+
 function datePicker(){
 	console.log("ronaldo")
 }
@@ -683,13 +666,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-function onMakeNoteChange() {
+function onMakeNoteChange(text = false) {
 	let noteContainer = document.getElementById("alou")
 	let newNote = document.getElementById("newNote")
 
 	console.log('Creating a new note...')
 
 	const url = "note"
+	if(text){
+		let noteText = text
+
+	}else{
+		let noteText = newNote.value
+
+	}
 	let noteText = newNote.value
 
 	let params = {
@@ -726,13 +716,11 @@ function onMakeNoteChange() {
 
 			var elems = document.querySelectorAll('.dropdown-trigger');
 		    var instDrop = M.Dropdown.init(elems, {'closeOnClick':false});
-		    
 		    var datepicker = document.querySelectorAll('.datepicker');
 		    var date_inst = M.Datepicker.init(datepicker, {"format": "yyyy-mm-dd"});
 			
 		    var timepicker = document.querySelectorAll('.timepicker');
 		    var time_inst = M.Timepicker.init(timepicker, {"twelveHour": false});
-		    
 
 		}))
 	})
@@ -776,12 +764,89 @@ function changePass(idUser) {
 	})
 	
 }
+
+function translateText(idNote) {
+	const noteInfo = getNoteInfo(idNote)
+	const texto = noteInfo.noteText
+	
+	let language = document.querySelector('input[name="language"]:checked').value;
+	
+	console.log('translating')
+	
+	const url = "https://translation.googleapis.com/language/translate/v2?key=AIzaSyDFu_r7HYx7OX4Vs977wvoWkF6fv9RMtzE"
+
+	const params = {
+			//"source" : "pt",
+			"format" : "text",
+			"q": [texto],
+			"target" : language
+
+			
+	}
+	
+	console.log(texto)
+	console.log(JSON.stringify(params))
+	fetch(url, {
+		method: "POST",
+		body: JSON.stringify(params),
+		headers: {
+			"Content-Type": "application/json"
+		}
+	
+}).then((res)=>{
+	res.json().then((data)=>{
+		console.log(data)
+		LanguageChange(idNote, data.data.translations["0"].translatedText)
+	})
+})
+}
+
+function LanguageChange(idNote, translate) {
+	let noteContainer = document.getElementById("alou")
+	
+	let note = document.getElementById("editor" + idNote)
+	let notezin = document.getElementById('note' + idNote)
+	let noteInfo = document.getElementById("notinha" + idNote)
+
+		console.log('atualizando o bd')
+		const url = "note"
+
+		let params = getNoteInfo(idNote)
+		
+		params.noteText = translate
+		
+		console.log(idNote)
+		console.log('request enviado')
+		fetch(url, {
+			method: "PUT",
+			body: JSON.stringify(params),
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			}
+
+
+		}).then((res) => {
+			(res.json().then((data) => {
+				note.setAttribute("style", "color:black");
+				note.innerText = data.noteText
+				noteInfo.style="order:-1;"
+				let time = document.getElementById('time'+idNote)
+				time.innerText = 'Last edited: '+ data.time
+				M.toast({
+					html: 'Note updated!!'
+				})
+
+			}))
+		})
+	
+}
+
 </script>
+
 <script async defer src="https://apis.google.com/js/api.js"
 	onload="this.onload=function(){};handleClientLoad()"
 	onreadystatechange="if (this.readyState === 'complete') this.onload()">
 </script>
-
 <style>
 #logoName {
 	padding-left: 2%;
@@ -939,15 +1004,12 @@ function changePass(idUser) {
 		</div>
 	</nav>
 
-
 	<pre id="content"></pre>
 	<div class="container">
 		<p>Google Calendar API</p>
-
 		<!--Add buttons to initiate auth sequence and sign out-->
 		<button id="authorize_button" style="display: none;">Authorize</button>
 		<button id="signout_button" style="display: none;">Sign Out</button>
-
 		<pre id="content"></pre>
 		<div class="row">
 			<div class="input-field col s12 m12 l12" id=''>
@@ -958,13 +1020,27 @@ function changePass(idUser) {
 					class="waves-effect waves btn-floating btn-small offset-s11 offset-m11 offset-l11 grey lighten-1"
 					style="margin-left: 1%"><i class="material-icons">add</i></a>
 
-
 			</div>
+			&nbsp;&nbsp;&nbsp;<span>TRANSLATION OPTIONS : </span>&nbsp;&nbsp;&nbsp;<label>
+				<input class="with-gap" name="language" type="radio" value="en"
+				id="radio" checked /> <span>English</span>
+			</label> &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <label> <input
+				class="with-gap" name="language" type="radio" value="fr" id="radio" />
+				<span>French</span>
+			</label> &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;<label> <input
+				class="with-gap" name="language" type="radio" value="de" id="radio" />
+				<span>German</span>
+			</label> &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <label> <input
+				class="with-gap" name="language" type="radio" value="pt" id="radio" />
+				<span>Portuguese</span>
+			</label> &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <label> <input
+				class="with-gap" name="language" type="radio" value="es" id="radio" />
+				<span>Spanish</span>
+			</label>
 
 
 
 		</div>
-
 
 		<div class="row note grid" id='alou'>
 			<jsp:useBean id="dao" class="mvc.model.DAO" />
@@ -1001,15 +1077,17 @@ function changePass(idUser) {
 							<li><div>
 									<i class="material-icons">color_lens</i> <input type="color"
 										id="colorPicker${note.idNote}" name="color"
-										value="${note.color}" onClick='onColorPicker(${note.idNote})'>
+										value="${note.color}" onclick='onColorPicker(${note.idNote})'>
 
-
+								</div></li>
+							<li><div onClick='translateText(${note.idNote})'
+									style="display: flex; justify-content: flex-start; align-items: center;">
+									<i class="material-icons">language</i>Translate
 								</div></li>
 							<li><div onClick='removeNote(${note.idNote})'
 									style="display: flex; justify-content: flex-start; align-items: center;">
 									<i class="material-icons">delete</i>Delete
 								</div></li>
-
 						</ul>
 						<div>
 							<div class="input-field col s12"
@@ -1031,12 +1109,11 @@ function changePass(idUser) {
 							<div>
 								<a class="waves-effect waves btn" id="addEvent${note.idNote}"
 									onClick="addEvent(${note.idNote})"
-									style="color: black; background-color: transparent; display: flex; justify-content: center; margin: 2px;">Create Event</a>
+									style="color: black; background-color: transparent; display: flex; justify-content: center; margin: 2px;">Create
+									Event</a>
 							</div>
-
-
 						</div>
-						<div id='noteFooter${note.idNote}'>
+						<div id='noteFooter'>
 							<div id='noteTag'>
 								<div contenteditable="true" class='tag' id="tag${note.idNote}"
 									class="card-panel " onfocus="onTagChange(${note.idNote})">
@@ -1044,13 +1121,10 @@ function changePass(idUser) {
 									<span id='note${note.idNote}'>${note.tag} </span>
 								</div>
 							</div>
-
-
 							<div id='time${note.idNote}' class='time' style='padding: 5px;'>Last
 								edited: ${note.time}</div>
 
 						</div>
-
 					</div>
 				</div>
 			</c:forEach>
