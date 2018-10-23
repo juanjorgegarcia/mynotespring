@@ -388,6 +388,7 @@ function onQuerySubmit(userId) {
 
 function onTagChange(idNote) {
 	let noteContainer = document.getElementById("alou")
+	const nots = document.getElementById("note"+idNote)
 
 	let noteInfo = document.getElementById("notinha" + idNote)
 
@@ -396,8 +397,8 @@ function onTagChange(idNote) {
 		console.log('atualizando o bd')
 		
 		const url = "note"
+		let tag = nots.children[3].children[0].innerText
 
-		let tag = note.innerText
 		const params = getNoteInfo(idNote)
 
 		console.log(idNote)
@@ -769,9 +770,6 @@ function changePass(idUser) {
 		M.toast({
 			html: 'Password Updated!!'
 		})
-		setInterval(()=>{
-			window.location.replace("/testespring");
-		}, 200);
 
 		
 
