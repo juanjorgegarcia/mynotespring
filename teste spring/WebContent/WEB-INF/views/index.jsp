@@ -9,12 +9,229 @@
 
 <html>
 <head>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<link rel="stylesheet" type="text/css" href="./css/style.css" />
-<script src="./js/index.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script src="./js/index.js"></script> -->
 <script>
-console.log("importou o js")
+//Client ID and API key from the Developer Console
+var CLIENT_ID = '707975249507-jaoe25kaupse1c9lba97og4hll37hk18.apps.googleusercontent.com';
+var API_KEY = 'AIzaSyC5VMPR01zRwEvVFlE1L3ToyBwgXRiFcuc';
+
+//Array of API discovery doc URLs for APIs used by the quickstart
+var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+
+//Authorization scopes required by the API; multiple scopes can be
+//included, separated by spaces.
+var SCOPES =
+  "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.events";
+
+
+
+/**
+*  On load, called to load the auth2 library and API client library.
+*/
+function handleClientLoad() {
+  gapi.load('client:auth2', initClient);
+}
+
+
+/**
+*  Initializes the API client library and sets up sign-in state
+*  listeners.
+*/
+function initClient() {
+
+  gapi.client.init({
+      apiKey: API_KEY,
+      clientId: CLIENT_ID,
+      discoveryDocs: DISCOVERY_DOCS,
+      scope: SCOPES
+  }).then(function () {
+	  var authorizeButton = document.getElementById("authorize_button");
+	  var signoutButton = document.getElementById("signout_button");
+      // Listen for sign-in state changes.
+      gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+      // Handle the initial sign-in state.
+      updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+      authorizeButton.onclick = handleAuthClick;
+      signoutButton.onclick = handleSignoutClick;
+  });
+}
+
+/**
+*  Called when the signed in status changes, to update the UI
+*  appropriately. After a sign-in, the API is called.
+*/
+function updateSigninStatus(isSignedIn) {
+	var authorizeButton = document.getElementById("authorize_button");
+	var signoutButton = document.getElementById("signout_button");
+  if (isSignedIn) {
+      authorizeButton.style.display = 'none';
+      signoutButton.style.display = 'block';
+//       listUpcomingEvents();
+      console.log(gapi.client)
+
+/*         var request = gapi.client.calendar.events.insert({
+          'calendarId': 'primary',
+          'resource': event
+      });
+      console.log(request)
+      request.execute(function (event) {
+          appendPre('Event created: ' + event.htmlLink);
+      }); */
+      console.log('rerer')
+      // sendAuthorizedApiRequest(request)
+
+  } else {
+      authorizeButton.style.display = 'block';
+      signoutButton.style.display = 'none';
+  }
+}
+
+/**
+*  Sign in the user upon button click.
+*/
+function handleAuthClick(event) {
+  gapi.auth2.getAuthInstance().signIn();
+}
+
+/**
+*  Sign out the user upon button click.
+*/
+function handleSignoutClick(event) {
+  gapi.auth2.getAuthInstance().signOut();
+}
+
+/**
+* Append a pre element to the body containing the given message
+* as its text node. Used to display the results of the API call.
+*
+* @param {string} message Text to be placed in pre element.
+*/
+function appendPre(message,idNote) {
+  var pre = document.getElementById('tag'+idNote);
+  var textContent = document.createTextNode(message + '\n');
+  pre.appendChild(textContent);
+}
+
+/**
+* Print the summary and start datetime/date of the next ten events in
+* the authorized user's calendar. If no events are found an
+* appropriate message is printed.
+*/
+
+function listUpcomingEvents() {
+  gapi.client.calendar.events.list({
+      'calendarId': 'primary',
+      'timeMin': (new Date()).toISOString(),
+      'showDeleted': false,
+      'singleEvents': true,
+      'maxResults': 10,
+      'orderBy': 'startTime'
+  }).then(function (response) {
+      var events = response.result.items;
+      appendPre('Upcoming events:');
+
+      if (events.length > 0) {
+          for (i = 0; i < events.length; i++) {
+              var event = events[i];
+              var when = event.start.dateTime;
+              if (!when) {
+                  when = event.start.date;
+              }
+              appendPre(event.summary + ' (' + when + ')')
+          }
+      } else {
+          appendPre('No upcoming events found.');
+      }
+  });
+}
+function createEvent(idNote){
+	console.log(idNote)
+	const timepicker = document.getElementById("timePicker"+idNote).value
+    const datepicker = document.getElementById("datePicker"+idNote).value
+	const noteInfo = getNoteInfo(idNote)
+	console.log(noteInfo)
+	var event = {
+		  'summary': noteInfo.title,
+		  'description': noteInfo.noteText,
+		  'start': {
+		    'dateTime': datepicker+"T"+timepicker+":00",
+		    'timeZone': 'America/Sao_Paulo'
+		  },
+		  'reminders': {
+		    'useDefault': false,
+		    'overrides': [
+		      {'method': 'email', 'minutes': 24 * 60},
+		      {'method': 'popup', 'minutes': 10}
+		    ]
+		  }
+		};
+	
+}
+function addEvent(idNote){
+	console.log(idNote)
+	const timepicker = document.getElementById("timePicker"+idNote).value
+    var datepicker = document.getElementById("datePicker"+idNote).value
+	const noteInfo = getNoteInfo(idNote)
+	console.log((timepicker))
+	let minutes= parseInt(timepicker.substring(3,5))+30
+	var hours = parseInt(datepicker.substring(0,2))
+	if (minutes>=60){
+		
+		hours = parseInt(timepicker.substring(0,2))+1
+		minutes = "00"
+			console.log(hours)
+
+		if (hours>=24){
+			var days = parseInt(datepicker.substring(8,10))+1
+			hours = "00"
+			console.log(hours)
+			
+		}
+		
+	}
+	console.log(hours)
+
+	const datetime= datepicker+"T"+timepicker+":00"
+	console.log(minutes)
+	console.log(datepicker+"T"+hours+":"+minutes+":00")
+	var event = {
+		  'summary': noteInfo.title,
+		  'description': noteInfo.noteText,
+		  'start': {
+		    'dateTime': datepicker+"T"+timepicker+":00",
+		    'timeZone': 'America/Sao_Paulo'
+		  },
+          'end': {
+              'dateTime': datepicker+"T"+hours+":"+minutes+":00",
+              'timeZone': 'America/Sao_Paulo'
+          },
+		  'reminders': {
+		    'useDefault': false,
+		    'overrides': [
+		      {'method': 'email', 'minutes': 24 * 60},
+		      {'method': 'popup', 'minutes': 10}
+		    ]
+		  }
+		};
+     var request = gapi.client.calendar.events.insert({
+		     'calendarId': 'primary',
+		     'resource': event
+		 });
+	 console.log(request) 
+     request.execute(function (event) {
+         appendPre('Event created: ' + event.htmlLink,idNote);
+     });
+
+}
+</script>
+<script>
 
 function getNoteInfo(idNote){
     const note = document.getElementById("note"+idNote)
@@ -22,7 +239,7 @@ function getNoteInfo(idNote){
     
    	const title = note.children[0].children[0].innerText
     const color = rgb2hex(note.style.getPropertyValue("background-color"))
-    let tag = note.children[2].children[0].innerText
+    let tag = note.children[3].children[0].innerText
 	if(tag[0]=='#'){
 		tag = tag
 	}
@@ -369,6 +586,31 @@ function createNote(note) {
 									<i class="material-icons">delete</i>Delete
 								</div></li>
 						</ul>
+						<div>
+						<div class="input-field col s12"
+							style="display: flex; margin-right: 15px; align-items: center;">
+							<input style="max-width: 70%;" id="datePicker\${note.idNote}"
+								type="text" class="datepicker"><label
+								style="max-width: 70%;" for="autocomplete-input">Choose
+								a day</label><i class="material-icons"
+								style="display: flex; align-items: flex-end; margin-left: 20px;">calendar_today</i>
+						</div>
+						<div class="input-field col s12"
+							style="display: flex; margin-right: 15px; align-items: center;">
+							<input style="max-width: 70%;" id="timePicker\${note.idNote}"
+								type="text" class="timepicker"><label
+								style="max-width: 70%;" for="autocomplete-input">Choose
+								the time</label><i class="material-icons"
+								style="display: flex; align-items: flex-end; margin-left: 20px;">schedule</i>
+						</div>
+						<div>
+							<a class="waves-effect waves btn" id="addEvent${note.idNote}"
+								onClick="addEvent(\${note.idNote})"
+								style="color: black; background-color: transparent; display: flex; justify-content: center; margin: 2px;">Create Event</a>
+						</div>
+
+
+					</div>
 						<div id="noteFooter">
 							<div id="noteTag">
 								<div contenteditable="true" class="tag" id="tag\${note.idNote}"
@@ -395,6 +637,9 @@ function showDropdown(){
 	},350)
 	
 }
+function datePicker(){
+	console.log("ronaldo")
+}
 document.addEventListener('DOMContentLoaded', function () {
 	console.log("importou o js")
 
@@ -409,7 +654,11 @@ document.addEventListener('DOMContentLoaded', function () {
 	var instChips = M.Chips.init(chips, {
 		'limit': 3
 	});
-
+    var datepicker = document.querySelectorAll('.datepicker');
+    var date_inst = M.Datepicker.init(datepicker, {"format": "yyyy-mm-dd"});
+	
+    var timepicker = document.querySelectorAll('.timepicker');
+    var time_inst = M.Timepicker.init(timepicker, {"twelveHour": false});
     
 	var collap = document.querySelectorAll('.collapsible');
 	var instCollap = M.Collapsible.init(collap, {});
@@ -476,6 +725,13 @@ function onMakeNoteChange() {
 
 			var elems = document.querySelectorAll('.dropdown-trigger');
 		    var instDrop = M.Dropdown.init(elems, {'closeOnClick':false});
+		    
+		    var datepicker = document.querySelectorAll('.datepicker');
+		    var date_inst = M.Datepicker.init(datepicker, {"format": "yyyy-mm-dd"});
+			
+		    var timepicker = document.querySelectorAll('.timepicker');
+		    var time_inst = M.Timepicker.init(timepicker, {"twelveHour": false});
+		    
 
 		}))
 	})
@@ -523,12 +779,11 @@ function changePass(idUser) {
 	
 }
 </script>
-<!-- <script src="https://unpkg.com/draggabilly@2/dist/draggabilly.pkgd.min.js"></script> -->
+<script async defer src="https://apis.google.com/js/api.js"
+	onload="this.onload=function(){};handleClientLoad()"
+	onreadystatechange="if (this.readyState === 'complete') this.onload()">
+</script>
 
-<!-- <script src="https://unpkg.com/packery@2/dist/packery.pkgd.min.js"></script> -->
-
-<!-- <script src="./index.js"></script>
- -->
 <style>
 #logoName {
 	padding-left: 2%;
@@ -679,16 +934,23 @@ function changePass(idUser) {
 						</div>
 					</li>
 				</ul>
-				<li><a href="/testespring" class="center" style="color: #1d87da">Sign
-						Out</a></li>
+				<li><a href="/testespring" class="center"
+					style="color: #1d87da">Sign Out</a></li>
 			</ul>
 
 		</div>
 	</nav>
 
 
+	<pre id="content"></pre>
 	<div class="container">
+		<p>Google Calendar API</p>
 
+		<!--Add buttons to initiate auth sequence and sign out-->
+		<button id="authorize_button" style="display: none;">Authorize</button>
+		<button id="signout_button" style="display: none;">Sign Out</button>
+
+		<pre id="content"></pre>
 		<div class="row">
 			<div class="input-field col s12 m12 l12" id=''>
 
@@ -741,15 +1003,42 @@ function changePass(idUser) {
 							<li><div>
 									<i class="material-icons">color_lens</i> <input type="color"
 										id="colorPicker${note.idNote}" name="color"
-										value="${note.color}" onclick='onColorPicker(${note.idNote})'>
+										value="${note.color}" onClick='onColorPicker(${note.idNote})'>
+
 
 								</div></li>
 							<li><div onClick='removeNote(${note.idNote})'
 									style="display: flex; justify-content: flex-start; align-items: center;">
 									<i class="material-icons">delete</i>Delete
 								</div></li>
+
 						</ul>
-						<div id='noteFooter'>
+						<div>
+							<div class="input-field col s12"
+								style="display: flex; margin-right: 15px; align-items: center;">
+								<input style="max-width: 70%;" id="datePicker${note.idNote}"
+									type="text" class="datepicker"><label
+									style="max-width: 70%;" for="autocomplete-input">Choose
+									a day</label><i class="material-icons"
+									style="display: flex; align-items: flex-end; margin-left: 20px;">calendar_today</i>
+							</div>
+							<div class="input-field col s12"
+								style="display: flex; margin-right: 15px; align-items: center;">
+								<input style="max-width: 70%;" id="timePicker${note.idNote}"
+									type="text" class="timepicker"><label
+									style="max-width: 70%;" for="autocomplete-input">Choose
+									the time</label><i class="material-icons"
+									style="display: flex; align-items: flex-end; margin-left: 20px;">schedule</i>
+							</div>
+							<div>
+								<a class="waves-effect waves btn" id="addEvent${note.idNote}"
+									onClick="addEvent(${note.idNote})"
+									style="color: black; background-color: transparent; display: flex; justify-content: center; margin: 2px;">Create Event</a>
+							</div>
+
+
+						</div>
+						<div id='noteFooter${note.idNote}'>
 							<div id='noteTag'>
 								<div contenteditable="true" class='tag' id="tag${note.idNote}"
 									class="card-panel " onfocus="onTagChange(${note.idNote})">
@@ -757,10 +1046,13 @@ function changePass(idUser) {
 									<span id='note${note.idNote}'>${note.tag} </span>
 								</div>
 							</div>
+
+
 							<div id='time${note.idNote}' class='time' style='padding: 5px;'>Last
 								edited: ${note.time}</div>
 
 						</div>
+
 					</div>
 				</div>
 			</c:forEach>
